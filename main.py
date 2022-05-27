@@ -5,29 +5,11 @@ import os
 import datetime as dt
 import pandas as pd
 from keep_alive import keep_alive
+import random
 
 NEWS_API = os.getenv('NEWS_API_KEY')
 
 news_api = NewsApiClient(api_key=NEWS_API)
-
-data = news_api.get_everything(q='(Indian Air Force) OR IAF',qintitle='Air Force', language='en')
-print('hello')
-
-articles = data['articles']
-
-str = ""
-cnt = 0
-for x,y in enumerate(articles):
-  if cnt == 6:
-    break
-  str += (f"""{x}    {y['title']}
-Link: {y['url']}
-        
-        """)
-  cnt += 1
-
-print(str)
-
 
 #bot code
 API_KEY = os.getenv('API_KEY')
@@ -42,6 +24,8 @@ def greet(message):
 @bot.message_handler(commands=['Help', 'help'])
 def help(message):
     bot.send_message(message.chat.id, """
+Type /help to get help.
+Type /greet to display the welcome message.
 Type /news to get the latest IAF news!
                      """)
 
@@ -54,20 +38,15 @@ def news(message):
   articles = data['articles']
 
   str = ""
-  cnt = 0
-  for x,y in enumerate(articles):
-    if cnt == 5:
-      break
+  for i in range(1, 6):
+    random_index = random.randint(0, len(articles)-1)
+
     str += (f"""
-{x+1}. {y['title']}
+{i}. {articles[random_index]['title']}
             
-Link: {y['url']}
+Link: {articles[random_index]['url']}
         
         """)
-    cnt += 1
-
-  #print(str)
-
   bot.send_message(message.chat.id, str)
 
 keep_alive()
